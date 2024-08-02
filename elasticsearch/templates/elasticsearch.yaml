@@ -7,6 +7,10 @@ metadata:
 spec:
   version: {{ .Values.elasticsearch.version | default .Chart.AppVersion }}
   volumeClaimDeletePolicy: DeleteOnScaledownOnly
+  http:
+    service:
+      spec:
+        type: LoadBalancer
   nodeSets:
   {{- range .Values.elasticsearch.nodeSets }}
   - name: {{ .name }}
