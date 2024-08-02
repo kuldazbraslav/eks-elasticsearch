@@ -8,7 +8,9 @@ module "eks" {
   cluster_endpoint_public_access  = true
 
   cluster_addons = {
-    aws-ebs-csi-driver     = {}
+    aws-ebs-csi-driver = {
+      service_account_role_arn = aws_iam_role.eks_ebs_csi_driver.arn
+    }
     coredns                = {}
     eks-pod-identity-agent = {}
     kube-proxy             = {}
@@ -36,4 +38,34 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 
   tags = local.default_tags
+}
+
+data "aws_iam_policy_document" "eks_ebs_csi_driver_assume_role" {
+  statement {
+    principals {
+      type        = "Federated"
+      identifiers = [module.eks.oidc_provider_arn]
+    }
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    condition {
+      test     = "StringEquals"
+      variable = "${module.eks.oidc_provider}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${module.eks.oidc_provider}:sub"
+      values   = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
+resource "aws_iam_role" "eks_ebs_csi_driver" {
+  name               = "${var.release_name}-eks-ebs-csi-driver"
+  assume_role_policy = data.aws_iam_policy_document.eks_ebs_csi_driver_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "eks_ebs_csi_driver" {
+  role       = aws_iam_role.eks_ebs_csi_driver.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
