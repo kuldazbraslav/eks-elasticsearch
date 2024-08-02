@@ -1,0 +1,12 @@
+{{- if .Values.storageClass.create }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageClass.name | default (include "elasticsearch.fullname" .) }}
+provisioner: {{ .Values.storageClass.provisioner }}
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  {{- toYaml .Values.storageClass.parameters | nindent 2 }}
+{{- end }}

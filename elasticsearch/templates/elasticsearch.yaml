@@ -1,0 +1,42 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ include "elasticsearch.fullname" . }}
+  labels:
+    {{- include "elasticsearch.labels" . | nindent 4 }}
+spec:
+  version: {{ .Values.elasticsearch.version | default .Chart.AppVersion }}
+  volumeClaimDeletePolicy: DeleteOnScaledownOnly
+  nodeSets:
+  {{- range .Values.elasticsearch.nodeSets }}
+  - name: {{ .name }}
+    count: {{ .count }}
+    config:
+      node.store.allow_mmap: false
+    podTemplate:
+      spec:
+        {{- if .affinity }}
+        affinity:
+          {{- toYaml .affinity | nindent 10 }}
+        {{- end }}
+        {{- if .tolerations }}
+        tolerations:
+          {{- toYaml .tolerations | nindent 10 }}
+        {{- end }}
+        {{- if .resources }}
+        containers:
+        - name: elasticsearch
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+        {{- end }}
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data # Do not change this name unless you set up a volume mount for the data path.
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .storage | default "5Gi" }}
+        storageClassName: {{ $.Values.storageClass.name | default (include "elasticsearch.fullname" $) }}
+  {{- end }}

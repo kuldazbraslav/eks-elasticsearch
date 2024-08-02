@@ -1,0 +1,44 @@
+storageClass:
+  create: true
+  name: ""
+  provisioner: ebs.csi.aws.com
+  parameters:
+    type: gp3
+    fsType: ext4
+    iops: "3000"
+    throughput: "125"
+
+elasticsearch:
+  nodeSets:
+  - name: default
+    count: 3
+    storage: 5Gi
+    resources:
+      requests:
+        cpu: 1
+        memory: 2Gi
+      limits:
+        memory: 2Gi
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: k8s.whalebone.io/dedicated
+              operator: In
+              values:
+              - elasticsearch
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: elasticsearch-node-group
+              operator: In
+              values:
+              - default
+          topologyKey: topology.kubernetes.io/zone
+    tolerations:
+    - key: "k8s.whalebone.io/dedicated"
+      operator: "Equal"
+      value: "elasticsearch"
+      effect: "NoSchedule"
