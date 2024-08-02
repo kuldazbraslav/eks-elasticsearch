@@ -17,7 +17,5 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  tags = {
-    Release = var.release_name
-  }
+  tags = local.default_tags
 }
