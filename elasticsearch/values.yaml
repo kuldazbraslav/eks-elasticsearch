@@ -9,6 +9,7 @@ storageClass:
     throughput: "125"
 
 elasticsearch:
+  version: "8.14.3"
   nodeSets:
   - name: default
     count: 3
