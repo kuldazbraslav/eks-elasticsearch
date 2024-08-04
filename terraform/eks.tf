@@ -21,21 +21,21 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_groups = {
-    main = {
+    nodes = {
       min_size     = 1
       max_size     = 3
       desired_size = 1
     }
-    elasticsearch = {
+    nodes_elasticsearch = {
       min_size     = 3
       max_size     = 3
       desired_size = 3
       labels = {
-        "k8s.whalebone.io/dedicated" = "elasticsearch"
+        "dedicated" = "elasticsearch"
       }
       taints = {
         dedicated = {
-          key    = "k8s.whalebone.io/dedicated"
+          key    = "dedicated"
           value  = "elasticsearch"
           effect = "NO_SCHEDULE"
         }
