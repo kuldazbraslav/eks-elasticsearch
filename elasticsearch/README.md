@@ -42,18 +42,9 @@ To uninstall/delete the `my-release` deployment:
 
 helm delete my-release
 
-
-## Persistence
-
-The chart mounts a PersistentVolume for data storage. You can disable this functionality by setting `persistence.enabled` to `false`.
-
 ## Security
 
 This chart implements basic authentication and TLS encryption. For production use, please review and adjust the security settings according to your requirements.
-
-## Monitoring
-
-The chart includes ServiceMonitor objects to work with Prometheus Operator for monitoring Elasticsearch clusters.
 
 ## Support
 
