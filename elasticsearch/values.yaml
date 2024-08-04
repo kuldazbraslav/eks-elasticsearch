@@ -24,7 +24,7 @@ elasticsearch:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
           - matchExpressions:
-            - key: k8s.whalebone.io/dedicated
+            - key: dedicated
               operator: In
               values:
               - elasticsearch
@@ -38,7 +38,7 @@ elasticsearch:
               - default
           topologyKey: topology.kubernetes.io/zone
     tolerations:
-    - key: "k8s.whalebone.io/dedicated"
+    - key: "dedicated"
       operator: "Equal"
       value: "elasticsearch"
       effect: "NoSchedule"
