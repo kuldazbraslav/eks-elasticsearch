@@ -27,3 +27,6 @@ appVersion: "8.14.3"
 #   - name: eck-operator
 #     version: 2.13.0
 #     repository: https://helm.elastic.co
+#   - name: cert-manager
+#     version: v1.15.2
+#     repository: https://charts.jetstack.io

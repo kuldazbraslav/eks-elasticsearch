@@ -11,6 +11,9 @@ spec:
     service:
       spec:
         type: LoadBalancer
+    tls:
+      certificate:
+        secretName: {{ include "elasticsearch.fullname" . }}-cert
   nodeSets:
   {{- range .Values.elasticsearch.nodeSets }}
   - name: {{ .name }}
